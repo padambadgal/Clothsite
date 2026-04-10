@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
     CardFooter
-} from "@/components/ui/card"
+} from "@/components/ui/Card"
 
 import {
     Tabs,
@@ -64,9 +64,9 @@ export const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const accessToken = localStorage.getItem('accessToken')
+        setLoading(true)
         try {
-            // Use FormData for text + file
+        const accessToken = localStorage.getItem('accessToken')
             const formData = new FormData()
             formData.append('firstName', updateUser.firstName)
             formData.append('lastName', updateUser.lastName)
@@ -92,7 +92,9 @@ export const Profile = () => {
             }
         } catch (error) {
             console.log(error)
-            toast.error("failed to update to File")
+            toast.error(error.response?.data?.message || "Failed to update profile")
+        } finally {
+            setLoading(false)
         }
     }
 

@@ -7,6 +7,7 @@ import cloudinary from 'cloudinary'
 import { sendOTPMail } from '../emailVerify/sendOTPMail.js'
 export const register = async (req, res) => {
   try {
+    console.log("req.body:", req.body);
     const { firstName, lastName, email, password } = req.body;
 
     // ✅ validation
@@ -35,7 +36,7 @@ export const register = async (req, res) => {
     const token = jwt.sign(
       { id: newUser._id },
       process.env.SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
     // ✅ send email
@@ -123,7 +124,7 @@ export const reVerify = async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '1d' }
     )
     await verifyEmail(token, email)
     user.token = token

@@ -11,32 +11,35 @@ import { setUser } from '@/redux/userSlice';
 const Navbar = () => {
     const dispatch = useDispatch()
     const { user } = useSelector(store => store.user);
+    const { cart } = useSelector(store => store.product);
     const navigate = useNavigate()
+    const admin = user?.role === 'admin' ? true : false
+
     const logoutHandle = async () => {
-    try {
-        const accessToken = localStorage.getItem("accessToken")
-        const res = await axios.post(
-            'http://localhost:8000/api/v1/user/logout',
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
+        try {
+            const accessToken = localStorage.getItem("accessToken")
+            const res = await axios.post(
+                'http://localhost:8000/api/v1/user/logout',
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
                 }
+            );
+
+            if (res.data.success) {
+                dispatch(setUser(null));
+                localStorage.removeItem("accessToken");
+                navigate('/');
+                toast.success(res.data.message);
             }
-        );
 
-        if (res.data.success) {
-            dispatch(setUser(null));
-            localStorage.removeItem("accessToken");
-            navigate('/');
-            toast.success(res.data.message);
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || "Logout failed");
         }
-
-    } catch (error) {
-        console.log(error);
-        toast.error(error.response?.data?.message || "Logout failed");
-    }
-};
+    };
     return (
         <header className='bg-pink-50 fixed w-full z-20 border-b border-pink-200'>
             <div className="max-w-7xl mx-auto flex justify-between items-center py-3">
@@ -55,11 +58,13 @@ const Navbar = () => {
                         {
                             user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName} </li></Link>
                         }
-
+                        {
+                            admin && <Link to={`/dashboard/sales`}><li>DashBoard</li></Link>
+                        }
                     </ul>
                     <Link to={'/cart'} className='relative'>
                         <ShoppingCart />
-                        <span className='bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2'>0</span>
+                        <span className='bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2'>{cart?.items?.length || 0}</span>
                     </Link>
                     {
                         user ? <Button onClick={logoutHandle} className="bg-pink-600 text-white cursor-pointer">Logout</Button> : <Button onClick={() => navigate('/login')} className="bg-gradient-to-tl from-blue-600 to-purple-600 text-white cursor-pointer">Login</Button>
