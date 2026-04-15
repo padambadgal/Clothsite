@@ -59,7 +59,7 @@ export const Cart = () => {
 
     const loadCart = async () => {
         try {
-            const res = await axios.get(`${API}/get`, {
+            const res = await axios.get(`${API}/`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -91,7 +91,7 @@ export const Cart = () => {
                                                 <div className="flex items-center w-[350px] ">
                                                     <img src={product.productId.productImg?.[0]?.url} alt="" className='w-25 h-25' />
                                                     <div className="w-280px">
-                                                        <h1 className='font-semibold truncate' >{product?.productId?.productName}</h1>
+                                                        <h1 className='font-semibold ' >{product?.productId?.productName}</h1>
                                                         <p>₹{product?.productId?.productPrice}</p>
                                                     </div>
                                                 </div>
@@ -137,7 +137,7 @@ export const Cart = () => {
                                                 <Input placeholder="Promo Code" />
                                                 <Button variant='outline'>Apply</Button>
                                             </div>
-                                            <Button className='w-full bg-pink-600' >Place Order</Button>
+                                            <Button onClick={() => navigate('/address')} className='w-full bg-pink-600 cursor-pointer' >Place Order</Button>
                                             <Button variant='outline' className='w-full bg-transparent' ><Link to="/products">Continue Shopping</Link></Button>
                                         </div>
                                         <div className="text-sm text-muted-foreground pt-4">

@@ -12,11 +12,11 @@ import ProductCard from '@/components/productCard'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { setProducts } from '@/redux/productSlice'
-import { useSelector , useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 // import store from '@/redux/store'
 
 const Products = () => {
-    const {products} = useSelector(store => store.product)
+    const { products } = useSelector(store => store.product)
     const [allProducts, setAllProducts] = useState([]);
     const [search, setSearch] = useState('')
     const [brand, setBrand] = useState('All')
@@ -25,7 +25,7 @@ const Products = () => {
     const [loading, setLoading] = useState(false);
     const [sortOrder, setSortOrder] = useState('')
     const dispatch = useDispatch()
-    
+
     const getAllProduct = async () => {
         try {
             setLoading(true)
@@ -66,7 +66,7 @@ const Products = () => {
         }
 
         dispatch(setProducts(filtered))
-    },[search,category, brand, sortOrder, priceRange, allProducts, dispatch])
+    }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch])
 
     useEffect(() => {
         getAllProduct()

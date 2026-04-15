@@ -32,6 +32,10 @@ export const Profile = () => {
     const { user } = useSelector(store => store.user)
     const params = useParams()
     const userId = params.userId
+    const [file, setFile] = useState('')
+    const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false);
+
 
     const [updateUser, setUpdateUser] = useState({
         firstName: user?.firstName,
@@ -46,14 +50,11 @@ export const Profile = () => {
 
     })
 
-    const [file, setFile] = useState('')
     const handleChange = (e) => {
         setUpdateUser({
             ...updateUser, [e.target.name]: e.target.value
         })
     }
-    const dispatch = useDispatch()
-    const [loading, setLoading] = useState(false);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -63,10 +64,10 @@ export const Profile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setLoading(true)
+
         try {
-        const accessToken = localStorage.getItem('accessToken')
+            const accessToken = localStorage.getItem('accessToken')
             const formData = new FormData()
             formData.append('firstName', updateUser.firstName)
             formData.append('lastName', updateUser.lastName)
