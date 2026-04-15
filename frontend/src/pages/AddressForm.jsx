@@ -1,13 +1,18 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { addAdress, deleteAddress, setAddresses, setSelectedAddress } from '@/redux/productSlice'
+import { addAdress, deleteAddress, setAddresses, setCart, setSelectedAddress } from '@/redux/productSlice'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 // import axios from 'axios'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Separator } from '@/components/ui/separator'
+import axios from 'axios'
+import { Import } from 'lucide-react'
+import { Toast } from 'radix-ui'
+// import { current } from '@reduxjs/toolkit'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const AddressForm = () => {
     const emptyForm = { fullName: "", phone: "", email: "", address: "", city: "", state: "", zip: "", country: "" }
@@ -15,6 +20,7 @@ const AddressForm = () => {
     const { cart, addresses = [], selectedAddress } = useSelector((store) => store.product)
     const [showForm, setShowForm] = useState(false)
     const dispatch = useDispatch()
+    const navigate = useNavigate
     // const accessToken = localStorage.getItem('accessToken')
 
 
@@ -31,6 +37,98 @@ const AddressForm = () => {
     const shipping = cart.SubTotal > 50 ? 0 : 10
     const tax = parseFloat((SubTotal * 0.5).toFixed(2))
     const total = SubTotal + shipping + tax
+
+    const handlePayment = async (e) => {
+        const accessToken = localStorage.getItem('accessToken')
+        try {
+            const { data } = await axios.post('http://localhost:8000/api/v1/orders/create-order',
+                {
+                    product: cart?.items?.map(item => ({
+                        productId: item._id,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    tax,
+                    shipping,
+                    amount: total,
+                    Currency: "INR",
+                }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            if (!data.success) return Toast.error("something went wrong")
+
+            const optons = {
+                key: Import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: data.order.amount,
+                Currency: data.order.Currency,
+                order_id: data.order.id,
+                name: "Clothsite",
+                description: "Order Payment",
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await axios.post('http://localhost:8000/api/v1/orders/verify-payment',
+                            response,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`
+                                }
+                            })
+                        if (verifyRes.data.success) {
+                            toast.success("✅ Payment Successfull")
+                            dispatch(setCart({ items: [], totalPrice: 0 }))
+                            navigate('/order-success')
+                        }
+                        else {
+                            toast.error("❌ Payment verification failed")
+                        }
+                    } catch (error) {
+                        toast.error("Error verifyimg payment")
+                    }
+                },
+                modal: {
+                    ondismiss: async function () {
+                        //Handle user closing the popup
+                        await axios.post('http://localhost:8000/api/v1/orders/verify-payment',
+                            {
+                                razorpay_order_iid: data.order.id
+                            },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`
+                                }
+                            });
+                        toast.error("Payment cancelled or failed")
+                    }
+                },
+                prefill: {
+                    name: formData.fullName,
+                    email: formData.email,
+                    contact: formData.phone
+                },
+                theme: { color: "#f472B6" }
+            };
+
+            const rzp = new window.Razorpay(optons)
+
+            // Listen for payment failed
+            rzp.on("Payment Failed", async function (response) {
+                await axios.post('http://localhost:8000/api/v1/orders/verify-payment', {
+                    razorpay_order_id: data.order.id,
+                    paymentFailed: true
+                }, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                })
+                toast.error("payment Failed. Please try again")
+            })
+            rzp.open()
+
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong while processing payment")
+        }
+    }
     return (
         <div className='max-w-7xl mx-auto grid place-items-center p-10'>
             <div className="grid grid-cols-2 items-start gap-20 mt-10 max-w-7xl mx-auto">
@@ -99,7 +197,10 @@ const AddressForm = () => {
                                 }
                                 <Button variant='outline' className=
                                     "w-full" onClick={() => setShowForm(true)}>+ Add New Address</Button>
-                                <Button disabled={selectedAddress === null} className='w-full bg-pink-600'>Procced to Checkout</Button>
+                                <Button 
+                                disabled={selectedAddress === null}
+                                onClick={handlePayment} 
+                                className='w-full bg-pink-600'>Procced to Checkout</Button>
                             </div>
                         )
                     }

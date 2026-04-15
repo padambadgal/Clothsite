@@ -5,7 +5,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoute from './routes/productRoutes.js'
 import cartRoute from './routes/cartRoute.js'
-import orderRoute from './routes/orderRoute.js'
+// import orderRoute from './routes/orderRoute.js'
 const app = express();
 
 connectDB();
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
-app.use("/api/v1/orders", orderRoute);
+// app.use("/api/v1/orders", orderRoute);
 
 
 
