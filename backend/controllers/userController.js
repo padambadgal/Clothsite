@@ -352,6 +352,31 @@ export const changePassword = async (req, res) => {
 
 }
 
+export const addAddress = async (req, res) => {
+  try {
+    const userId = req.id
+    const { fullName, phone, email, address, city, state, zip, country } = req.body
+    const user = await User.findById(userId)
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' })
+    user.addresses.push({ fullName, phone, email, address, city, state, zip, country })
+    await user.save()
+    return res.status(200).json({ success: true, message: 'Address added', addresses: user.addresses })
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message })
+  }
+}
+
+export const getAddresses = async (req, res) => {
+  try {
+    const userId = req.id
+    const user = await User.findById(userId).select('addresses')
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' })
+    return res.status(200).json({ success: true, addresses: user.addresses })
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message })
+  }
+}
+
 export const allUser = async (req, res) => {
   try {
     const users = await User.find()

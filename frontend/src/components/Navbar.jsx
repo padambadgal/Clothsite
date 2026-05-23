@@ -54,7 +54,7 @@ const Navbar = () => {
                     <ul className="flex gap-7 items-center text-xl font-semibold">
                         <Link to={'/'}><li>Home</li></Link>
                         <Link to={'/products'}><li>Products</li></Link>
-                        <Link to={'/products'}><li>Contact Us</li></Link>
+                        <Link to={'/contact'}><li>Contact Us</li></Link>
                         {
                             user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName} </li></Link>
                         }

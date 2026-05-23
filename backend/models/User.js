@@ -16,7 +16,17 @@ const userSchema = new mongoose.Schema({
   city:{ type:String },
   zipCode:{ type:String },
   phoneNo:{ type:String },
-  address:{ type:String }
+  address:{ type:String },
+  addresses:[{
+    fullName:{ type:String },
+    phone:{ type:String },
+    email:{ type:String },
+    address:{ type:String },
+    city:{ type:String },
+    state:{ type:String },
+    zip:{ type:String },
+    country:{ type:String }
+  }]
 },{timestamps:true});
 
 const User = mongoose.model("User", userSchema);

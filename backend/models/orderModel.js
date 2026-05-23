@@ -1,4 +1,4 @@
-import { mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
     user: {
@@ -23,10 +23,10 @@ const orderSchema = new mongoose.Schema({
     tax: { type: Number, required: true },
     shipping: { type: Number, required: true },
     currency: { type: String, default: "INR" },
-    status: { type: String, enum: ['Pending', 'Paid', 'Failed'], default: 'pending' },
+    status: { type: String, enum: ['Pending', 'Paid', 'Failed'], default: 'Pending' },
 
-    // Razorpay Field
-    razorpay: { type: String },
+    // Instamojo Fields
+    paymentRequestId: { type: String },
     userpayPaymentID: { type: String },
     userpaySignature: { type: String }
 }, {
