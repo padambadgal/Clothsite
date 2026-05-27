@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button } from '@/components/ui/button'
-import { ShoppingCart, Trash2 } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Link, useNavigate } from 'react-router-dom'
@@ -77,6 +77,7 @@ export const Cart = () => {
         loadCart()
     }, [dispatch])
     return (
+        
         <div className='pt-20 bg-gray-50 min-h-screen'>
             {
                 cart?.items?.length > 0 ?
@@ -86,12 +87,12 @@ export const Cart = () => {
                             <div className="flex flex-col gap-5 flex-1">
                                 {
                                     cart?.items?.map((product, index) => {
-                                        return <Card key={index}>
+                                        return <Card key={index} >
                                             <div className="flex justify-between items-center px-7">
                                                 <div className="flex items-center w-[350px] ">
                                                     <img src={product.productId.productImg?.[0]?.url} alt="" className='w-25 h-25' />
-                                                    <div className="w-280px">
-                                                        <h1 className='font-semibold ' >{product?.productId?.productName}</h1>
+                                                    <div className="w-280px pl-5 ">
+                                                        <h1 className='font-semibold pb-2'>{product?.productId?.productName}</h1>
                                                         <p>₹{product?.productId?.productPrice}</p>
                                                     </div>
                                                 </div>

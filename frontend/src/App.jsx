@@ -64,6 +64,10 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><OrderSuccess /></ProtectedRoute>
   },
   {
+    path: '/order-success',
+    element: <ProtectedRoute><OrderSuccess /></ProtectedRoute>
+  },
+  {
     path: '/dashboard',
     element: <ProtectedRoute adminOnly={true} ><Navbar /><Dashboard /></ProtectedRoute>,
     children: [
@@ -84,7 +88,7 @@ const router = createBrowserRouter([
         element: <AdminOrders />
       },
       {
-        path: 'users/order/:userId',
+        path: 'users/orders/:userId',
         element: <ShowUsersorders />
       },
       {

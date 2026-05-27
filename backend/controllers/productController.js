@@ -1,6 +1,7 @@
 import { Product } from "../models/productModel.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUrl.js";
+import { Order } from "../models/orderModel.js";
 
 export const addProduct = async (req, res) => {
     try {
@@ -173,6 +174,118 @@ export const updateProduct = async (req, res) => {
             product
         })
     } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//Home bestseller and catgeory
+export const getBestSellerProducts = async (req, res) => {
+    try {
+
+        // Aggregate most ordered products
+        const bestSellers = await Order.aggregate([
+
+            { $unwind: "$products" },
+
+            {
+                $group: {
+                    _id: "$products.productId",
+
+                    totalSold: {
+                        $sum: "$products.quantity"
+                    }
+                }
+            },
+
+            {
+                $sort: {
+                    totalSold: -1
+                }
+            },
+
+            {
+                $limit: 4
+            }
+        ])
+
+        // get only product ids
+        const productIds = bestSellers.map(item => item._id)
+
+        const products = await Product.find({
+            _id: { $in: productIds }
+        })
+
+        return res.status(200).json({
+            success: true,
+            products
+        })
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+export const getCategories = async (req, res) => {
+    try {
+
+        const categories = await Product.aggregate([
+
+            // sort products high to low
+            {
+                $sort: {
+                    productPrice: -1
+                }
+            },
+
+            // group by category
+            {
+                $group: {
+                    _id: "$category",
+
+                    image: {
+                        $first: {
+                            $arrayElemAt: ["$productImg.url", 0]
+                        }
+                    },
+
+                    highestPrice: {
+                        $first: "$productPrice"
+                    }
+                }
+            },
+
+            // sort categories by highest price
+            {
+                $sort: {
+                    highestPrice: -1
+                }
+            },
+
+            // final response
+            {
+                $project: {
+                    _id: 0,
+                    category: "$_id",
+                    image: 1,
+                    highestPrice: 1
+                }
+            }
+
+        ])
+
+        return res.status(200).json({
+            success: true,
+            categories
+        })
+
+    } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: error.message

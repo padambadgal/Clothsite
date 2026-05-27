@@ -1,39 +1,38 @@
-import { Headphones, Shield, Truck } from 'lucide-react'
+import { Headphones, Shield, Truck,BadgeCheck,ShieldCheck   } from 'lucide-react'
 import React from 'react'
 
 
 const Features = () => {
     return (
-        <section className='py-12 bg-muted/50'>
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="grid md:grid-cols-3 gap-8">
-                    <div className="flex items-center space-x-4">
-                        <div className="h-12 w-12 bg-blue-100 roundedn-full flex items-center justify-center">
-                            <Truck className='h-6 w-6 text-blue-600' />
-                        </div>
-                        <div>
-                            <h3 className='font-semibold'>Free Shipping</h3>
-                            <p className="text-muted-foreground">On Orders Over $50</p>
-                        </div>
+        <section className='py-12 '>
+            <div className="max-w-7xl flex flex-wrap  justify-around mx-auto px-4">
+                <div className="flex items-center gap-3">
+                    <div className="bg-pink-100 p-3 rounded-full">
+                        <BadgeCheck className="text-pink-500 w-6 h-6" />
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <div className="h-12 w-12 bg-blue-100 roundedn-full flex items-center justify-center">
-                            <Shield className='h-6 w-6 text-green-600' />
-                        </div>
-                        <div>
-                            <h3 className='font-semibold'>Secure Payment</h3>
-                            <p className="text-muted-foreground">100% secure transaction</p>
-                        </div>
+
+                    <span className="text-gray-700 font-medium">
+                        Premium Quality
+                    </span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="bg-pink-100 p-3 rounded-full">
+                        <Truck className="text-pink-500 w-6 h-6" />
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <div className="h-12 w-12 bg-blue-100 roundedn-full flex items-center justify-center">
-                            <Headphones className='h-6 w-6 text-purple-600' />
-                        </div>
-                        <div>
-                            <h3 className='font-semibold'>24/7 Support</h3>
-                            <p className="text-muted-foreground">Always here to help</p>
-                        </div>
+
+                    <span className="text-gray-700 font-medium">
+                        Fast Shipping
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <div className="bg-pink-100 p-3 rounded-full">
+                        <ShieldCheck className="text-pink-500 w-6 h-6" />
                     </div>
+
+                    <span className="text-gray-700 font-medium">
+                        Secure Payment
+                    </span>
                 </div>
             </div>
         </section>

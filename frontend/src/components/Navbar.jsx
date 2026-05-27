@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '@/redux/userSlice';
+import Logo from '../assets/Logo.png'
 
 
 const Navbar = () => {
@@ -46,7 +47,8 @@ const Navbar = () => {
 
                 {/* logo section  */}
                 <div>
-                    <img src="/clothsite.pn" alt="clothiste" className='w-[100px]' />
+                    <img src={Logo} alt="logo" className='w-[80px]' />
+                    <p></p>
                 </div>
 
                 {/* Nav Section */}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '@/redux/userSlice'
@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
     CardFooter
-} from "@/components/ui/Card"
+} from "@/components/ui/card"
 
 import {
     Tabs,
@@ -33,7 +33,7 @@ export const Profile = () => {
     const { user } = useSelector(store => store.user)
     const params = useParams()
     const userId = params.userId
-    const [file, setFile] = useState('')
+    const [file, setFile] = useState(null)
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false);
 
@@ -45,12 +45,30 @@ export const Profile = () => {
         phoneNo: user?.phoneNo,
         address: user?.address,
         city: user?.city,
-        zipcode: user?.zipcode,
+        zipCode: user?.zipCode,
         profilePic: user?.profilePic,
         role: user?.role
 
     })
+useEffect(() => {
 
+    if (user) {
+
+        setUpdateUser({
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            email: user?.email,
+            phoneNo: user?.phoneNo,
+            address: user?.address,
+            city: user?.city,
+            zipCode: user?.zipCode,
+            profilePic: user?.profilePic,
+            role: user?.role
+        })
+
+    }
+
+}, [user])
     const handleChange = (e) => {
         setUpdateUser({
             ...updateUser, [e.target.name]: e.target.value
@@ -58,10 +76,16 @@ export const Profile = () => {
     }
 
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
+
+        const selectedFile = e.target.files?.[0];
+        if (!selectedFile) return;
         setFile(selectedFile)
-        setUpdateUser({ ...updateUser, profilePic: URL.createObjectURL(selectedFile) })
+        setUpdateUser({
+            ...updateUser,
+            profilePic: URL.createObjectURL(selectedFile)
+        })
     }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -76,7 +100,7 @@ export const Profile = () => {
             formData.append('phoneNo', updateUser.phoneNo)
             formData.append('address', updateUser.address)
             formData.append('city', updateUser.city)
-            formData.append('zipcode', updateUser.zipcode)
+            formData.append('zipCode', updateUser.zipCode)
             formData.append('role', updateUser.role)
 
             if (file) {
@@ -85,12 +109,11 @@ export const Profile = () => {
             const res = await axios.put(`http://localhost:8000/api/v1/user/update/${userId}`, formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "multipart/form-data"
                 }
             })
             if (res.data.success) {
                 toast.success(res.data.message)
-                dispatch(setUser(res.data.user))
+                    dispatch(setUser(res.data.user))
             }
         } catch (error) {
             console.log(error)
@@ -114,7 +137,7 @@ export const Profile = () => {
                             <div className="w-full flex gap-10 justify-between items-start px-7 max-w-2xl">
                                 {/* profile picture */}
                                 <div className='flex flex-col items-center'>
-                                    <img src={updateUser?.profilePic} alt="profile" className='w-34 h-34 rounded-full object-cover border-4 border-pink-800' />
+                                    <img src={updateUser?.profilePic || null} alt="profile" className='w-34 h-34 rounded-full object-cover border-4 border-pink-800' />
                                     <Label className='mt-4 cursor-pointer bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700'>Change Picture
                                         <input type="file" accept='image/*' className='hidden' onChange={handleFileChange} />
                                     </Label>
@@ -125,33 +148,33 @@ export const Profile = () => {
                                         <div>
                                             <Label className='block text-sm font-medium'>First Name
                                             </Label>
-                                            <Input type='text' name='firstName' value={updateUser.firstName} onChange={handleChange} placeholder='John' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                            <Input type='text' name='firstName' value={updateUser.firstName || ''} onChange={handleChange} placeholder='John' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                         </div>
                                         <div>
                                             <Label className='block text-sm font-medium'>Last Name</Label>
-                                            <Input type='text' name='lastName' value={updateUser.lastName} onChange={handleChange} placeholder='Doe' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                            <Input type='text' name='lastName' value={updateUser.lastName || ''} onChange={handleChange} placeholder='Doe' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                         </div>
                                     </div>
                                     <div>
                                         <Label className='block text-sm font-medium'>Email</Label>
-                                        <Input type='email' name='email' value={updateUser.email} onChange={handleChange} disabled className='w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 cursor-not-allowed' />
+                                        <Input type='email' name='email' value={updateUser.email || ''} onChange={handleChange} disabled className='w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 cursor-not-allowed' />
                                     </div>
                                     <div>
                                         <Label className='block text-sm font-medium'>phone Number</Label>
-                                        <Input type='text' name='phoneNo' value={updateUser.phoneNo} onChange={handleChange} placeholder='Enter your Contact number' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                        <Input type='text' name='phoneNo' value={updateUser.phoneNo || ''} onChange={handleChange} placeholder='Enter your Contact number' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                     </div>
                                     <div>
                                         <Label className='block text-sm font-medium'>Address</Label>
-                                        <Input type='text' name='address' value={updateUser.address} onChange={handleChange} placeholder='Enter your Address' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                        <Input type='text' name='address' value={updateUser.address || ''} onChange={handleChange} placeholder='Enter your Address' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                     </div>
                                     <div className='grid grid-cols-2 gap-4'>
                                         <div>
                                             <Label className='block text-sm font-medium'>City</Label>
-                                            <Input type='text' name='city' value={updateUser.city} onChange={handleChange} placeholder='Enter your City' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                            <Input type='text' name='city' value={updateUser.city || ''} onChange={handleChange} placeholder='Enter your City' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                         </div>
                                         <div>
                                             <Label className='block text-sm font-medium'>Zip Code</Label>
-                                            <Input type='text' name='zipcode' value={updateUser.zipcode} onChange={handleChange} placeholder='Enter your ZipCode' className='w-full border rounded-lg px-3 py-2 mt-1' />
+                                            <Input type='text' name='zipCode' value={updateUser.zipCode || ''} onChange={handleChange} placeholder='Enter your zipCode' className='w-full border rounded-lg px-3 py-2 mt-1' />
                                         </div>
                                     </div>
                                     <Button type='submit' className='w-full mt-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 rounded-lg'>
@@ -164,7 +187,7 @@ export const Profile = () => {
                     </div>
                 </TabsContent>
                 <TabsContent value="orders">
-                    <MyOrder/>
+                    <MyOrder />
                 </TabsContent>
             </Tabs>
         </div>

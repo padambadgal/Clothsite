@@ -32,6 +32,8 @@ const ProductDesc = ({ product }) => {
             <p className='text-gray-800'>{product.category} | {product.brand}</p>
             <h2 className='text-pink-500 font-bold text-2xl'>₹{product.productPrice}</h2>
             <p className='lime-clamp-12 text-muted-foreground'>{product.productDesc}</p>
+            <p className='lime-clamp-12 text-muted-foreground'>{product.productColor}</p>
+            <p className='lime-clamp-12 text-muted-foreground'>{product.productSize}</p>
             <div className="flex gap-2 items-center w-[300px]">
                 <p className='text-gray font-semibold'>Quantity :</p>
                 <Input type='number' className='w-14' defaultValue={1} />

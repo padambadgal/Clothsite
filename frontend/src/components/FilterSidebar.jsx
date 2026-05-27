@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-
+import { useSearchParams } from 'react-router-dom'
 const FilterSidebar = ({ allProducts, priceRange, setPriceRange, search, setSearch, setBrand, brand, category, setCategory }) => {
-
+    const [searchParams] = useSearchParams()
+    // const useEffect 
     const Categories = allProducts.map(p => p.category)
     const UniqueCategories = ['All', ...new Set(Categories)]
 
@@ -35,6 +36,19 @@ const FilterSidebar = ({ allProducts, priceRange, setPriceRange, search, setSear
         setBrand("All");
         setPriceRange([0, 999999])
     }
+
+    //param category select
+    useEffect(() => {
+
+    const urlCategory =
+        searchParams.get("category")
+
+    if (urlCategory) {
+        setCategory(urlCategory)
+    }
+
+}, [searchParams])
+
     return (
         <div className='bg-gray-100 mt-10 p-4 rounded-md h-max hidden md:block w-70'>
             {/* Search */}

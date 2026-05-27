@@ -86,10 +86,70 @@ const AddressForm = () => {
                 { headers: { Authorization: `Bearer ${accessToken}` } }
             )
             if (!data.success) return toast.error('Something went wrong')
-            window.location.href = data.paymentUrl
+            conole.log("Razorpay Data :", data);
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: data.amount,
+                currency: "INR",
+                name: "STYLEORA",
+                discription: "Order Payment",
+                order_id: data.orderId,
+                handler: async function (response) {
+                    console.log(response);
+                    // Handle payment success
+                    try {
+                        const verifyRes = await axios.post('http://localhost:8000/api/v1/orders/verify-payment',
+                            response, {
+                            headers: { Authorization: `Bearer ${accessToken}` }
+                        })
+                        if (verifyRes.data.success) {
+                            toast.success("✅ Payment Successfull!")
+                            dispatch(setCart({ items: [], totalPrice: 0 }))
+                            navigate('/order-success')
+                        } else {
+                            toast.error("❌ Payment Verification Failed!")
+                        }
+                    } catch (error) {
+                        toast.error('error Verification Failed')
+                    }
+                },
+                modal: {
+                    ondismiss: async function () {
+                        //handle user closing the popup
+                        await axios.post("http://localhost:8000/api/v1/orders/verify-payment", {
+                            razorpay_order_id: data.order.id,
+                            paymentFailed: true
+                        }, {
+                            headers: { Authorization: `Bearer ${accessToken}` }
+                        });
+                        toast.error('Payment cancelled or Failed')
+                    }
+                },
+                prefill: {
+                    name: formData.fullName,
+                    email: formData.email,
+                    contact: formData.phone
+                }, theme: { color: '#F472B6' }
+            }
+
+            const rzp = new window.Razorpay(options)
+
+            // Listen for payment failure
+            rzp.on("Payment.Failed", async function (response) {
+                await axios.post('http://localhost:8000/api/v1/orders/verify-payment', {
+                    rezorpay_order_id: data.order.id,
+                    paymentFailed: true
+                }, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                })
+                toast.error("Payment failed Please try again")
+            })
+
+            rzp.open()
         } catch (error) {
             console.log(error)
-            toast.error(error.response?.data?.message || 'Payment Failed')
+            toast.error(error.response?.data?.message || 'Something went wrong while processing Payment')
         }
     }
 

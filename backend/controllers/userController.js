@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { verifyEmail } from "../emailVerify/verifyEmail.js";
 import { Session } from "../models/Session.js";
-import cloudinary from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 import { sendOTPMail } from '../emailVerify/sendOTPMail.js'
 export const register = async (req, res) => {
   try {
@@ -416,7 +416,7 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const userIdUpdate = req.params.id;
+    const userIdUpdate = req.params.userId;
     const loggedInUser = req.user;
     const { firstName,
       lastName,
@@ -443,6 +443,7 @@ export const updateUser = async (req, res) => {
 
     let profilePicUrl = user.profilePic;
     let profilePicPublicId = user.profilePicPublicId;
+    
 
     if (req.file) {
       if (profilePicPublicId) {
